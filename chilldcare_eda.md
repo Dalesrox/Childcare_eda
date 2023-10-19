@@ -144,34 +144,10 @@ print(df_county.info())
 
 ```python
 #Check data head (we can see all columns because of pd.set_option('display.max_columns', None) row at the begining)
-print("\n\nchildcare_costs:\n\n")
 df_costs.head()
 ```
 
-    
-    
-    childcare_costs:
-    
-    
-    
-
-
-
-
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -573,30 +549,7 @@ print("\n\n County data\n\n")
 df_county.head()
 ```
 
-    
-    
-     County data
-    
-    
-    
-
-
-
-
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -651,35 +604,12 @@ df_county.head()
 
 
 ```python
-print("\n\n County data\n\n")
+print("\n\n Variable metadata\n\n")
 
 costs_dict
 ```
 
-    
-    
-     County data
-    
-    
-    
-
-
-
-
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -1456,7 +1386,7 @@ widgets.interactive(boxplot, variable=variable_widget)
 
 
 
-    interactive(children=(Dropdown(description='variable', options=('county_fips_code', 'study_year', 'unr_16', 'f…
+![png](chilldcare_eda_files/univariate_boxplot.png)
 
 
 
@@ -1670,7 +1600,7 @@ widgets.interactive(scatter, variable1=variable1_widget, variable2=variable2_wid
 
 
 
-    interactive(children=(Dropdown(description='variable1', options=('unr_16', 'funr_16', 'munr_16', 'unr_20to64',…
+![png](chilldcare_eda_files/jointplot.png)
 
 
 
@@ -1705,7 +1635,7 @@ widgets.interactive(violinplot, variable1=variable1_widget, variable2=variable2_
 
 
 
-    interactive(children=(Dropdown(description='variable1', index=51, options=('unr_16', 'funr_16', 'munr_16', 'un…
+![png](chilldcare_eda_files/violinplot.png)
 
 
 
