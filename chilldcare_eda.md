@@ -1635,7 +1635,7 @@ widgets.interactive(violinplot, variable1=variable1_widget, variable2=variable2_
 
 
 
-![png](chilldcare_eda_files/violinplot.png)
+![png](chilldcare_eda_files/Violinplot.png)
 
 
 
