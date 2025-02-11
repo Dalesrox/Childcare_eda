@@ -52,11 +52,11 @@ femp_n;double;Percent of female civilians employed in natural resources, constru
 emp_p;double;Percent of civilians employed in production, transportation, and material moving occupations aged 16 years old and older in the county.
 memp_p;double;Percent of male civilians employed in production, transportation, and material moving occupations aged 16 years old and older in the county.
 femp_p;double;Percent of female civilians employed in production, transportation, and material moving occupations aged 16 years old and older in the county.
-mcsa;double;Weekly, full-time median price charged for Center-Based Care for those who are school age based on the results reported in the market rate survey report for the county or the rate zone/cluster to which the county is assigned.
-mfccsa;double;Weekly, full-time median price charged for Family Childcare for those who are school age based on the results reported in the market rate survey report for the county or the rate zone/cluster to which the county is assigned.
-mc_infant;double;Aggregated weekly, full-time median price charged for Center-based Care for infants (i.e. aged 0 through 23 months).
-mc_toddler;double;Aggregated weekly, full-time median price charged for Center-based Care for toddlers (i.e. aged 24 through 35 months).
-mc_preschool;double;Aggregated weekly, full-time median price charged for Center-based Care for preschoolers (i.e. aged 36 through 54 months).
-mfcc_infant;double;Aggregated weekly, full-time median price charged for Family Childcare for infants (i.e. aged 0 through 23 months).
-mfcc_toddler;double;Aggregated weekly, full-time median price charged for Family Childcare for toddlers (i.e. aged 24 through 35 months).
-mfcc_preschool;double;Aggregated weekly, full-time median price charged for Family Childcare for preschoolers (i.e. aged 36 through 54 months).
+mcsa;double;Weekly, full-time median price (in USD) charged for Center-Based Care for those who are school age based on the results reported in the market rate survey report for the county or the rate zone/cluster to which the county is assigned.
+mfccsa;double;Weekly, full-time median price (in USD) charged for Family Childcare for those who are school age based on the results reported in the market rate survey report for the county or the rate zone/cluster to which the county is assigned.
+mc_infant;double;Aggregated weekly, full-time median price (in USD) charged for Center-based Care for infants (i.e. aged 0 through 23 months).
+mc_toddler;double;Aggregated weekly, full-time median price (in USD) charged for Center-based Care for toddlers (i.e. aged 24 through 35 months).
+mc_preschool;double;Aggregated weekly, full-time median price (in USD) charged for Center-based Care for preschoolers (i.e. aged 36 through 54 months).
+mfcc_infant;double;Aggregated weekly, full-time median price (in USD) charged for Family Childcare for infants (i.e. aged 0 through 23 months).
+mfcc_toddler;double;Aggregated weekly, full-time median price (in USD) charged for Family Childcare for toddlers (i.e. aged 24 through 35 months).
+mfcc_preschool;double;Aggregated weekly, full-time median price (in USD) charged for Family Childcare for preschoolers (i.e. aged 36 through 54 months).
