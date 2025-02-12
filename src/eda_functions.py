@@ -2,14 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-import ipywidgets as widgets # For widgets in notebooks (optional, can be removed for Streamlit)
-
-def boxplot(df, variable):
-    """Generates a boxplot for a specific variable in the DataFrame."""
-    fig = plt.figure(figsize=(5,4)) # Create figure object and return it
-    sns.boxplot(data=df, x=variable, whis=3)
-    plt.title(f'Boxplot of {variable}')
-    return fig # Return the figure
 
 def histogram(df, variable):
     """Generates a histogram for a specific variable in the DataFrame."""

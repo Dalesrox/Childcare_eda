@@ -4,6 +4,9 @@ import statsmodels.api as sm
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 import statsmodels.formula.api as smf
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
 
 def perform_ttest(df, group_col, value_col, group1, group2):
     """
@@ -91,6 +94,68 @@ def perform_kmeans_clustering(df, feature_cols, n_clusters=3):
     df.loc[data_clustering.index, 'cluster'] = kmeans.fit_predict(data_scaled).astype(str) # Assign clusters only to valid rows
     return df
 
+def get_cluster_centroids(df, feature_cols):
+    """
+    Calculates the centroids and observation counts for each cluster in a DataFrame.
+
+    Args:
+        df (pandas.DataFrame): DataFrame with a 'cluster' column.
+        feature_cols (list): List of feature columns used for clustering.
+
+    Returns:
+        pandas.DataFrame: DataFrame with cluster centroids and observation counts.
+    """
+    if 'cluster' not in df.columns:
+        raise ValueError("DataFrame must have a 'cluster' column after K-Means clustering.")
+    if not feature_cols:
+        raise ValueError("Feature columns cannot be empty.")
+
+    centroid_df = df.groupby('cluster')[feature_cols].mean().reset_index()
+    observation_counts = df['cluster'].value_counts().reset_index() # Count observations per cluster
+    observation_counts.columns = ['cluster', 'Observations'] # Rename columns for clarity
+
+    centroid_df = pd.merge(centroid_df, observation_counts, on='cluster') # Merge centroid and counts
+
+    return centroid_df
+
+def plot_linear_regression(model, df, y_col, x_cols):
+    """
+    Generates a scatter plot with the linear regression line for simple linear regression (one x_col).
+
+    Args:
+        model (statsmodels.regression.linear_model.RegressionResultsWrapper): Linear regression model results.
+        df (pandas.DataFrame): DataFrame used for regression.
+        y_col (str): Name of the dependent column.
+        x_cols (list): List of names of independent columns (expecting only one for simple plot).
+
+    Returns:
+        matplotlib.figure.Figure: Matplotlib figure containing the scatter plot and regression line.
+    """
+    if not x_cols:
+        raise ValueError("X columns cannot be empty for plotting.")
+    if len(x_cols) > 1:
+        print("Warning: Plotting only the first independent variable for simple linear regression plot.")
+
+    x_col = x_cols[0] # Take the first x_col for simple plot
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.scatterplot(x=df[x_col], y=df[y_col], ax=ax, alpha=0.7)
+
+    # Get regression line values
+    X_plot = pd.DataFrame({x_col: df[x_col].sort_values()})
+    X_plot = sm.add_constant(X_plot) # Add constant for prediction
+    y_predicted = model.predict(X_plot)
+
+    # Plot regression line
+    ax.plot(df[x_col].sort_values(), y_predicted, color='red', label=f'Regression Line')
+
+    ax.set_xlabel(x_col)
+    ax.set_ylabel(y_col)
+    ax.set_title(f'Linear Regression: {y_col} vs {x_col}')
+    ax.legend()
+    return fig
+
+
 
 if __name__ == '__main__':
     from data_loading import load_and_merge_data
@@ -110,20 +175,26 @@ if __name__ == '__main__':
 
 
     # Example of ANOVA
-    f_stat, p_val_anova = perform_anova(df_costs_cleaned, 'state_name', 'mcsa')
-    if f_stat is not None:
+    anova_table = perform_anova(df_costs_cleaned, 'state_name', 'mcsa')
+    if anova_table is not None:
         print(f"\nANOVA (MCSA by state):")
-        print(f"  F-statistic: {f_stat:.4f}, P-value: {p_val_anova:.4f}")
+        print(anova_table)
     else:
         print("\nCould not perform ANOVA (possibly less than 2 valid groups).")
 
 
     # Example of Linear Regression
-    regression_model = perform_linear_regression(df_costs_cleaned, 'mcsa', ['mhi_2018', 'unr_16'])
-    print(f"\nLinear Regression (MCSA vs MHI and UNR):\n{regression_model.summary()}")
+    regression_model = perform_linear_regression(df_costs_cleaned, 'mcsa', ['mhi_2018']) # Using only one X for simple plot
+    print(f"\nLinear Regression (MCSA vs MHI):\n{regression_model.summary()}")
+    regression_fig = plot_linear_regression(regression_model, df_costs_cleaned, 'mcsa', ['mhi_2018'])
+    plt.show()
 
 
     # Example of K-Means Clustering
     df_clustered = perform_kmeans_clustering(df_costs_cleaned.copy(), ['mcsa', 'mhi_2018', 'unr_16'], n_clusters=4)
     print("\nDataFrame with K-Means clusters. First rows:")
     print(df_clustered[['county_name', 'state_name', 'cluster']].head())
+
+    centroids_df = get_cluster_centroids(df_clustered, ['mcsa', 'mhi_2018', 'unr_16'])
+    print("\nCluster Centroids:")
+    print(centroids_df)
