@@ -5,10 +5,10 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
-from data_loading import load_and_merge_data
-from data_cleaning import clean_data
-from eda_functions import histogram, scatter_plot, violin_plot, correlation_heatmap, create_categorical_columns
-from statistical_analysis import (perform_ttest, perform_anova, perform_linear_regression,
+from src.data_loading import load_and_merge_data
+from src.data_cleaning import clean_data
+from src.eda_functions import histogram, scatter_plot, violin_plot, correlation_heatmap, create_categorical_columns
+from src.statistical_analysis import (perform_ttest, perform_anova, perform_linear_regression,
                                     perform_kmeans_clustering, get_cluster_centroids, plot_linear_regression)
 
 
