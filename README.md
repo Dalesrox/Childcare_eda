@@ -1,6 +1,8 @@
-# EDA on childcare costs data
 
-## Real run in: https://childcare-eda.streamlit.app/, password: super_strong_password
+# Real run in: https://childcare-eda.streamlit.app/
+# password: super_strong_password
+
+# EDA on childcare costs data
 
 Objetive: Implement Exploratory Data Analysis tecniques (EDA) in order to getting insights from childcare costs database (alvailable in Kaggle: https://www.kaggle.com/datasets/sujaykapadnis/childcare-costs).
 
