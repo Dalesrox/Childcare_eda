@@ -1,6 +1,6 @@
 import pandas as pd
 
-def load_and_merge_data(costs_file='./data/childcare_costs.csv', counties_file='./data/counties.csv', dict_file='./data/childcare_dictionary.csv'):
+def load_and_merge_data(costs_file='src/data/childcare_costs.csv', counties_file='src/data/counties.csv', dict_file='src/data/childcare_dictionary.csv'):
     """
     Loads childcare costs, counties, and dictionary datasets and merges them.
     Args:
