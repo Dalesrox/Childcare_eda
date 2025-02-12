@@ -43,7 +43,7 @@ st.set_page_config(
 # --- Authentication Function ---
 def check_password():
     """Returns `True` if the user had the correct password."""
-
+    st.session_state["password"] = None
     def password_entered():
         """Checks whether a password entered by the user is correct."""
         if st.session_state["password"] == st.secrets["password"]: # Uses st.secrets for secure password management
