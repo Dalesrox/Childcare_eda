@@ -59,7 +59,7 @@ def check_password():
     if "password_correct" not in st.session_state:
         # First run, show inputs for password.
         st.text_input(
-            "Easter egg -> Password is: super_strong_password", type="password", on_change=password_entered, key="password"
+            "Easter egg -> Password is: super_strong_password", placeholder="Please insert password!", type="password", on_change=password_entered, key="password"
         )
         return False
     elif not st.session_state["password_correct"]:
