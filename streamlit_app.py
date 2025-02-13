@@ -59,13 +59,13 @@ def check_password():
     if "password_correct" not in st.session_state:
         # First run, show inputs for password.
         st.text_input(
-            "Easter egg -> Password is: super_strong_password", placeholder="Please insert password!", type="password", on_change=password_entered, key="password"
+            "**Easter egg -> Password is: super_strong_password**", placeholder="Please insert password!", type="password", on_change=password_entered, key="password"
         )
         return False
     elif not st.session_state["password_correct"]:
         # Password not correct, display input and error.
         st.text_input(
-            "Password", type="password", on_change=password_entered, key="password"
+            label="**Easter egg -> Password is: super_strong_password**", placeholder="Please insert password!", type="password", on_change=password_entered, key="password"
         )
         st.error("password is super_strong_password")
         return False
@@ -74,7 +74,7 @@ def check_password():
         return True
 
 
-st.title("EDA on Childcare Costs Data ")
+st.title("EDA on Childcare Costs Data 💰")
 if not check_password():
     st.subheader("Objetive:")
     st.text("""
