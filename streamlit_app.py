@@ -1,3 +1,5 @@
+# run with streamlit run streamlit_app.py --server.address 127.0.0.1
+
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -9,7 +11,8 @@ from src.data_loading import load_and_merge_data
 from src.data_cleaning import clean_data
 from src.eda_functions import histogram, scatter_plot, violin_plot, correlation_heatmap, create_categorical_columns
 from src.statistical_analysis import (perform_ttest, perform_anova, perform_linear_regression,
-                                    perform_kmeans_clustering, get_cluster_centroids, plot_linear_regression)
+                                    perform_kmeans_clustering, get_cluster_centroids, plot_linear_regression, perform_tukey_hsd,
+                                    interpret_tukey_hsd_results)
 
 
 # --- Data Loading and Initial Setup (Keep this part unchanged) ---
@@ -32,9 +35,9 @@ def get_variable_description(variable_name, dictionary_df):
 
 st.set_page_config(
     page_title="Interactive Exploration of Childcare Costs",
-    page_icon="💰",  # Puedes usar emojis como iconos
-    layout="centered",  # O 'centered' para el ancho de la página
-    initial_sidebar_state="expanded", # O 'collapsed'
+    page_icon="💰",  
+    layout="centered",  
+    initial_sidebar_state="expanded", 
     menu_items={
         'Report a bug': "https://github.com/Dalesrox/Childcare_eda/issues",
     }
@@ -42,7 +45,8 @@ st.set_page_config(
 
 # --- Authentication Function ---
 def check_password():
-    """Returns `True` if the user had the correct password."""
+    """Returns `True` if the user had the correct password."""    
+    
     st.session_state["password"] = None
     def password_entered():
         """Checks whether a password entered by the user is correct."""
@@ -55,7 +59,7 @@ def check_password():
     if "password_correct" not in st.session_state:
         # First run, show inputs for password.
         st.text_input(
-            "Password is:super_strong_password", type="password", on_change=password_entered, key="password"
+            "Easter egg -> Password is: super_strong_password", type="password", on_change=password_entered, key="password"
         )
         return False
     elif not st.session_state["password_correct"]:
@@ -63,14 +67,24 @@ def check_password():
         st.text_input(
             "Password", type="password", on_change=password_entered, key="password"
         )
-        st.error("😕 Password incorrect")
+        st.error("password is super_strong_password")
         return False
     else:
         # Password correct.
         return True
 
+
+st.title("EDA on Childcare Costs Data ")
 if not check_password():
-    st.stop()  # Halt execution if password check fails
+    st.subheader("Objetive:")
+    st.text("""
+        Implement Exploratory Data Analysis techniques (EDA) in order to get insights from the childcare costs database:\n 
+    - https://www.kaggle.com/datasets/sujaykapadnis/childcare-costs.
+\nAlso implement auth filter for login and logout in the website, for showing a way of secure the presentation.
+\nThis project aims to perform an exhaustive exploratory data analysis (EDA) on the Childcare Costs dataset, leveraging the power of Python, Pandas, and Seaborn to uncover hidden patterns, trends, and correlations. Through a combination of descriptive statistics, data cleaning techniques, and interactive visualizations, we will delve into the structure and characteristics of the data, identifying key variables, outliers, and relationships that can inform our understanding of childcare costs.
+\nThis EDA will encompass a range of techniques, including univariate and bivariate analysis, categorization of numeric data, and analysis of categories versus numeric data using sklearn exploratory techniques and Seaborn visualizations. By applying these methods, we will gain a deeper understanding of the factors that drive childcare costs, including the impact of demographic variables, geographic location, and service type.
+""")
+    st.stop()  
 
 # --- If password is correct, continue with the app ---
 st.sidebar.header("Navigation")
@@ -150,7 +164,7 @@ elif page == "Statistical Analysis":
         group1_ttest_val = st.selectbox(f"Select Group 1 ({grouping_category})", group_options, index=0)
         group2_ttest_val = st.selectbox(f"Select Group 2 ({grouping_category})", group_options, index=min(1, len(group_options)-1))
 
-        if st.button("Perform T-Test"):
+        if st.button("Run the T-Test!"):
             if group1_ttest_val == group2_ttest_val:
                 st.error("Please select two different groups for the T-Test.")
             else:
@@ -174,20 +188,29 @@ elif page == "Statistical Analysis":
     st.write(f"**Numeric Variable Description:** {get_variable_description(anova_variable_val, costs_dict)}")
 
     anova_grouping_category = st.selectbox("Select Categorical Variable for Grouping (ANOVA)", category_options, index=category_options.index('cat_hispanic'))
-    st.write(f"**Categorical Grouping Variable:** {get_variable_description(anova_grouping_category, costs_dict)} expressed in percentiles (0-25, 25-50, 50-75, 100)")
+    st.write(f"**Categorical Grouping Variable:** {get_variable_description(anova_grouping_category, costs_dict)} expressed in percentiles (0-25, 25-50, 50-75, 75-100)")
 
 
-    if st.button("Perform ANOVA"):
+    if st.button("Perform ANOVA!"):
         anova_table_result = perform_anova(df_costs_cleaned, anova_grouping_category, anova_variable_val)
         if anova_table_result is not None:
             st.write(f"**ANOVA Results ({anova_variable_val} by {anova_grouping_category}):**")
-            st.dataframe(anova_table_result)
+            st.dataframe(round(anova_table_result))
             f_statistic = anova_table_result['F'].iloc[0]
             p_value_anova = anova_table_result['PR(>F)'].iloc[0]
 
             st.write(f"F-Statistic: {f_statistic:.4f}, P-Value: {p_value_anova:.4f}")
             if p_value_anova < 0.05:
                 st.success("Significant differences found between groups (p < 0.05).")
+                # Perform and display Tukey's HSD post-hoc test
+                tukey_result_df = perform_tukey_hsd(df_costs_cleaned, anova_grouping_category, anova_variable_val)
+                if tukey_result_df is not None:
+                    st.subheader("Tukey's HSD Post-Hoc Test")
+                    st.dataframe(round(tukey_result_df,4)) # Display Tukey's HSD results
+                    st.write("Pairwise comparisons using Tukey's HSD post-hoc test. 'reject' = True indicates a significant difference between the means of the two groups at a significance level of 0.05.")
+                    # Interpret and display Tukey's HSD results as text
+                    tukey_interpretation_text = interpret_tukey_hsd_results(tukey_result_df, anova_grouping_category, anova_variable_val)
+                    st.write(tukey_interpretation_text)
             else:
                 st.info("No evidence of significant differences between groups (p >= 0.05).")
         else:
@@ -197,11 +220,11 @@ elif page == "Statistical Analysis":
     # --- Linear Regression ---
     st.subheader("Linear Regression")
     y_var_reg_val = st.selectbox("Dependent Variable (Y) for Regression", numeric_options, index=numeric_options.index('mcsa'))
-    x_vars_reg_val = st.multiselect("Independent Variables (X) for Regression", numeric_options, default=['mhi_2018', 'unr_16'])
+    x_vars_reg_val = st.multiselect("Independent Variables (X) for Regression", numeric_options, default=['mhi_2018'])
     for item in x_vars_reg_val:
         st.write(f"**Variable {item}:** {get_variable_description(item, costs_dict)}")
 
-    if st.button("Perform Linear Regression"):
+    if st.button("Perform Linear Regression!"):
         if y_var_reg_val and x_vars_reg_val:
             regression_model = perform_linear_regression(df_costs_cleaned, y_var_reg_val, x_vars_reg_val)
             st.write("**Linear Regression Model Summary:**")
@@ -228,7 +251,7 @@ elif page == "Statistical Analysis":
     for item in cluster_features_val:
         st.write(f"**Variable {item}:** {get_variable_description(item, costs_dict)}")
 
-    if st.button("Perform K-Means Clustering"):
+    if st.button("Start clustering!"):
         if cluster_features_val:
             df_clustered = perform_kmeans_clustering(df_costs_cleaned.copy(), cluster_features_val, n_clusters=n_clusters_input_val)
 

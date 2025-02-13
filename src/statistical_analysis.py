@@ -3,6 +3,7 @@ from scipy import stats
 import statsmodels.api as sm
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
 import statsmodels.formula.api as smf
 import matplotlib.pyplot as plt
 import numpy as np
@@ -29,6 +30,68 @@ def perform_ttest(df, group_col, value_col, group1, group2):
         return t_statistic, p_value
     else:
         return None, None
+
+def perform_tukey_hsd(df, group_col, value_col):
+    """
+    Performs Tukey's HSD post-hoc test and returns the results as a DataFrame.
+
+    Args:
+        df (pandas.DataFrame): DataFrame.
+        group_col (str): Name of the column defining groups.
+        value_col (str): Name of the column with values to compare.
+
+    Returns:
+        pandas.DataFrame: Tukey's HSD results as DataFrame.
+    """
+    try:
+        m_comp = pairwise_tukeyhsd(df[value_col], df[group_col], alpha=0.05)
+        tukey_df = pd.DataFrame(data=m_comp._results_table.data[1:], columns=m_comp._results_table.data[0])
+        return tukey_df
+    except Exception as e:
+        print(f"Error performing Tukey's HSD: {e}")
+        return None
+
+
+def interpret_tukey_hsd_results(tukey_df, group_col_name, value_col_name):
+    """
+    Generates a text interpretation of the Tukey's HSD post-hoc test results.
+
+    Args:
+        tukey_df (pandas.DataFrame): DataFrame containing Tukey's HSD results.
+        group_col_name (str): Name of the grouping column used in ANOVA.
+        value_col_name (str): Name of the value column used in ANOVA.
+
+    Returns:
+        str: Text interpretation of the Tukey's HSD results.
+    """
+    interpretation_text = f"**Interpretation of Tukey's HSD Post-Hoc Test for variable '{value_col_name}' grouped by '{group_col_name}':**\n\n"
+    significant_differences = False # Flag to check if there are any significant differences
+
+    for index, row in tukey_df.iterrows():
+        group1 = row['group1']
+        group2 = row['group2']
+        meandiff = row['meandiff']
+        reject = row['reject']
+
+        comparison_interpretation = f"- Comparison between **'{group1}'** and **'{group2}'**: "
+
+        if reject:
+            significant_differences = True
+            if meandiff > 0:
+                comparison_interpretation += f"There is a **significant difference**. On average, group **'{group1}'** has significantly **higher** values of '{value_col_name}' than group **'{group2}'** (mean difference = {meandiff:.4f}).\n"
+            else:
+                comparison_interpretation += f"There is a **significant difference**. On average, group **'{group1}'** has significantly **lower** values of '{value_col_name}' than group **'{group2}'** (mean difference = {meandiff:.4f}).\n"
+        else:
+            comparison_interpretation += f"**No significant difference** was found in the means of '{value_col_name}' between groups **'{group1}'** and **'{group2}'**.\n"
+
+        interpretation_text += comparison_interpretation
+
+    if not significant_differences:
+        interpretation_text += f"\n**In summary, although the initial ANOVA test detected significant differences between groups overall, the Tukey HSD post-hoc test did not find significant differences between *any specific pair of groups*.** This might indicate that the overall significance in ANOVA is due to complex differences across multiple groups that are not detectable in direct pairwise comparisons with this test, or that the significant differences are more subtle and not as pronounced between specific pairs."
+    else:
+        interpretation_text += f"\n**In summary, the Tukey HSD post-hoc test has identified the pairs of categories listed above that show significant differences in the variable '{value_col_name}'.** It is important to review the mean differences ('meandiff') and the specific groups to understand the nature of these differences in the context of your analysis."
+
+    return interpretation_text
 
 def perform_anova(df, group_col, value_col):
     """
